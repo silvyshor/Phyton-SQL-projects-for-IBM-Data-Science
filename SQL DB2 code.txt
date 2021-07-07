@@ -1,0 +1,207 @@
+------------------------------------------
+--DDL statement for table 'HR' database--
+--------------------------------------------
+
+CREATE TABLE EMPLOYEES (
+                            EMP_ID CHAR(9) NOT NULL, 
+                            F_NAME VARCHAR(15) NOT NULL,
+                            L_NAME VARCHAR(15) NOT NULL,
+                            SSN CHAR(9),
+                            B_DATE DATE,
+                            SEX CHAR,
+                            ADDRESS VARCHAR(30),
+                            JOB_ID CHAR(9),
+                            SALARY DECIMAL(10,2),
+                            MANAGER_ID CHAR(9),
+                            DEP_ID CHAR(9) NOT NULL,
+                            PRIMARY KEY (EMP_ID));
+                            
+  CREATE TABLE JOB_HISTORY (
+                            EMPL_ID CHAR(9) NOT NULL, 
+                            START_DATE DATE,
+                            JOBS_ID CHAR(9) NOT NULL,
+                            DEPT_ID CHAR(9),
+                            PRIMARY KEY (EMPL_ID,JOBS_ID));
+ 
+ CREATE TABLE JOBS (
+                            JOB_IDENT CHAR(9) NOT NULL, 
+                            JOB_TITLE VARCHAR(15) ,
+                            MIN_SALARY DECIMAL(10,2),
+                            MAX_SALARY DECIMAL(10,2),
+                            PRIMARY KEY (JOB_IDENT));
+
+CREATE TABLE DEPARTMENTS (
+                            DEPT_ID_DEP CHAR(9) NOT NULL, 
+                            DEP_NAME VARCHAR(15) ,
+                            MANAGER_ID CHAR(9),
+                            LOC_ID CHAR(9),
+                            PRIMARY KEY (DEPT_ID_DEP));
+
+CREATE TABLE LOCATIONS (
+                            LOCT_ID CHAR(9) NOT NULL,
+                            DEP_ID_LOC CHAR(9) NOT NULL,
+                            PRIMARY KEY (LOCT_ID,DEP_ID_LOC));
+                            
+SELECT F_NAME, L_NAME FROM EMPLOYEES WHERE ADDRESS LIKE '%Elgin, Il%';
+SELECT F_NAME, L_NAME FROM EMPLOYEES WHERE B_DATE LIKE '197%';
+SELECT F_NAME, L_NAME FROM EMPLOYEES WHERE  DEP_ID=5 AND (SALARY BETWEEN 60000 AND 70000);
+SELECT F_NAME, L_NAME, DEP_ID  FROM EMPLOYEES ORDER BY DEP_ID;
+SELECT F_NAME, L_NAME, DEP_ID  FROM EMPLOYEES ORDER BY DEP_ID desc, L_NAME desc;
+SELECT DEP_ID, COUNT(*) AS "NUM_EMPLOYEES"  FROM EMPLOYEES GROUP BY DEP_ID;
+SELECT DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"  FROM EMPLOYEES GROUP BY DEP_ID;
+SELECT DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"  FROM EMPLOYEES GROUP BY DEP_ID ORDER BY AVG_SALARY;
+SELECT DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"  FROM EMPLOYEES GROUP BY DEP_ID HAVING COUNT(*) <4  ORDER BY AVG_SALARY;
+select DEP_ID, NUM_EMPLOYEES, AVG_SALARY from (SELECT DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"  FROM EMPLOYEES GROUP BY DEP_ID)  WHERE NUM_EMPLOYEES<4 ORDER BY AVG_SALARY;
+SELECT D.DEP_NAME, E.F_NAME, E.L_NAME 
+from EMPLOYEES as E, DEPARTMENTS as D
+where E.DEP_ID = D.DEPT_ID_DEP
+order by D.DEP_NAME, E.L_NAME desc ;
+
+-- Query 1------
+;
+select F_NAME , L_NAME
+from EMPLOYEES
+where ADDRESS LIKE '%Elgin,IL%' ;
+--Query 2--
+;
+select F_NAME , L_NAME
+from EMPLOYEES
+where B_DATE LIKE '197%' ;
+---Query3--
+;
+select *
+from EMPLOYEES
+where (SALARY BETWEEN 60000 and 70000)  and DEP_ID = 5 ;
+--Query4A--
+;
+select F_NAME, L_NAME, DEP_ID 
+from EMPLOYEES
+order by DEP_ID;
+--Query4B--
+;
+select F_NAME, L_NAME, DEP_ID 
+from EMPLOYEES
+order by DEP_ID desc, L_NAME desc;
+--Query5A--
+;
+select DEP_ID, COUNT(*)
+from EMPLOYEES
+group by DEP_ID;
+--Query5B--
+;
+select DEP_ID, COUNT(*), AVG(SALARY)
+from EMPLOYEES
+group by DEP_ID;
+--Query5C--
+;
+select DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"
+from EMPLOYEES
+group by DEP_ID;
+--Query5D--
+;
+select DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"
+from EMPLOYEES
+group by DEP_ID
+order by AVG_SALARY;
+--Query5E--
+;
+select DEP_ID, COUNT(*) AS "NUM_EMPLOYEES", AVG(SALARY) AS "AVG_SALARY"
+from EMPLOYEES
+group by DEP_ID
+having count(*) < 4
+order by AVG_SALARY;
+--5E alternative: if you want to use the label
+select DEP_ID, NUM_EMPLOYEES, AVG_SALARY from
+  ( select DEP_ID, COUNT(*) AS NUM_EMPLOYEES, AVG(SALARY) AS AVG_SALARY from EMPLOYEES group by DEP_ID)
+  where NUM_EMPLOYEES < 4
+order by AVG_SALARY;
+--BONUS Query6--
+;
+select D.DEP_NAME , E.F_NAME, E.L_NAME
+from EMPLOYEES as E, DEPARTMENTS as D
+where E.DEP_ID = D.DEPT_ID_DEP
+order by D.DEP_NAME, E.L_NAME desc ;
+
+-- Drop the PETRESCUE table in case it exists
+drop table PETRESCUE;
+-- Create the PETRESCUE table 
+create table PETRESCUE (
+	ID INTEGER PRIMARY KEY NOT NULL,
+	ANIMAL VARCHAR(20),
+	QUANTITY INTEGER,
+	COST DECIMAL(6,2),
+	RESCUEDATE DATE
+	);
+-- Insert sample data into PETRESCUE table
+insert into PETRESCUE values 
+	(1,'Cat',9,450.09,'2018-05-29'),
+	(2,'Dog',3,666.66,'2018-06-01'),
+	(3,'Dog',1,100.00,'2018-06-04'),
+	(4,'Parrot',2,50.00,'2018-06-04'),
+	(5,'Dog',1,75.75,'2018-06-10'),
+	(6,'Hamster',6,60.60,'2018-06-11'),
+	(7,'Cat',1,44.44,'2018-06-11'),
+	(8,'Goldfish',24,48.48,'2018-06-14'),
+	(9,'Dog',2,222.22,'2018-06-15')
+
+-- A1--	
+;
+select sum(COST) 
+from PETRESCUE;
+--A2 --
+;
+SELECT SUM(COST) AS SUM_OF_COST
+FROM PETRESCUE;
+--ABSOLUTEACCELERATION3--
+;
+SELECT MAX(QUANTITY) 
+FROM PETRESCUE;
+--A4--
+;
+SELECT AVG(COST)
+FROM PETRESCUE;
+--A5--
+;
+SELECT AVG(COST/QUANTITY)
+FROM PETRESCUE
+WHERE ANIMAL='Dog'
+;
+--B1--
+;
+SELECT ROUND(COST)
+FROM PETRESCUE;
+--B2--
+;
+SELECT ANIMAL, LENGTH(ANIMAL)
+FROM PETRESCUE;
+--B3--
+;
+SELECT UCASE(ANIMAL)
+FROM PETRESCUE;
+--B4--
+;
+SELECT DISTINCT(UPPER(ANIMAL))
+FROM PETRESCUE;
+--B5--
+;
+SELECT *
+FROM PETRESCUE
+WHERE LCASE(ANIMAL)='cat';
+--C1--
+;
+SELECT DAY(RESCUEDATE)
+FROM PETRESCUE
+WHERE ANIMAL='Cat';
+--C2--
+;
+SELECT COUNT(*)
+FROM PETRESCUE
+WHERE DAY(RESCUEDATE)='05';
+--C3--
+;
+SELECT (RESCUEDATE+3)
+FROM PETRESCUE;
+--C4--
+SELECT (CURRENT_DATE-RESCUEDATE)
+FROM PETRESCUE;
+
